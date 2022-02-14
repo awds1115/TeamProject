@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.team.iTeam">
+<!-- 객실관리 -->
+<select id="getroomType" resultType="com.human.team.Roomtype">
+	select typecode,name from roomtype order by typecode
+</select>
+<select id="getroomList" resultType="com.human.team.RoomList">
+	select a.code,a.name as R_name,b.name as T_name,a.howmany,a.howmuch
+	  from room a, roomtype b
+	 where a.type=b.typecode(+)
+</select>
+<insert id="typeAdd">
+	insert into roomtype(typecode,name) values(seq_typecode.nextval,#{param1})
+</insert>
+<insert id="RoomAdd">
+	insert into room (code,name,type,howmany,howmuch) values(seq_roomcode.nextval,#{param1},#{param2},#{param3},#{param4})
+</insert>
+<delete id="typeDelete">
+	delete from roomtype where typecode=#{param1}
+</delete>
+<delete id="roomDelete">
+	delete from room where code=#{param1}
+</delete>
+<update id="Roomupdate">
+	update room set name=#{param2}, type=#{param3}, howmany=#{param4}, howmuch=#{param5} where code=#{param1}
+</update>
+<update id="typeupdate">
+	update roomtype set name=#{param2} where typecode=#{param1}
+</update>
+
+
+<insert id="signCheck">
+	insert into member(name,gender,userid,passcode,mobile,type) values(#{param1},#{param2},#{param3},#{param4},#{param5},#{param6})
+</insert>
+<delete id="quitMember">
+	delete from member where userid=#{param1}
+</delete>
+<select id="getMemberList" resultType="com.human.team.Member">
+   select userid,passcode,mobile,name from member
+</select>
+<update id="UpdateMember">
+   update member set login_time=to_char(sysdate,'YY/MM/DD') where userid=#{param1}
+</update>
+<select id="getTypeList" resultType="com.human.team.Member">
+   select userid,type from member
+</select>
+<update id="logoutMember">
+   update member set logout_time=to_char(sysdate,'YY/MM/DD') where userid=#{param1}
+</update>
+
+
+<select id="getReserve" resultType="com.human.team.Reserve">
+   <![CDATA[
+   select a.name as aname,b.name as bname,a.howmany,a.howmuch
+   from room a,roomtype b
+   where a.type=b.typecode and a.howmany > #{param2} and b.typecode=#{param1}
+   ]]>
+</select>
+<select id="getRoomtype" resultType="com.human.team.Roomtype">
+   select typecode,name from roomtype
+</select>
+<select id="getBookList" resultType="com.human.team.Book">
+   select book_id,roomcode,start_dt,end_dt,howmany,guest,mobile,howmuch,member_id from book
+</select>
+
+
+<select id="getView" resultType="com.human.team.Notice">
+select id,name,title,content,created,viewcnt 
+    from (select rownum id, name,title,content, created, viewcnt from board)
+where id=#{param1}
+</select>
+<update id="plusViewCnt">
+   update board set viewcnt=viewcnt+1 where id=#{param1} 
+</update>
+<insert id="writeNotice">
+   insert into board(id,title,name,content,created,viewcnt)
+   values(seq_board.nextval,#{param1},#{param2},#{param3},sysdate,0)
+</insert>
+<delete id="deleteNotice">
+   delete from board where id=#{param1}
+</delete>
+<update id="updateNotice">
+   update board set title=#{param2},name=#{param3},content=#{param4} 
+   where id=#{param1}
+</update>
+<select id="getPaging" resultType="com.human.team.Notice">
+ select id,name,title,content,created,viewcnt 
+    from (select rownum id, name,title,content, created, viewcnt from board)
+where id between 1 and 10 order by id
+</select>
+<insert id="insertBook">
+   insert into book values (seq_book.nextval,#{param1},#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8})
+</insert>
+<select id="PagingList" resultType="com.human.team.Notice">
+ select id,name,title,content,created,viewcnt 
+    from (select rownum id, name,title,content, created, viewcnt from board)
+where id between #{param1} and #{param2} order by id
+</select>
+</mapper>
