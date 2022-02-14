@@ -42,18 +42,19 @@ table {
 <thead>
 	<tr><th>게시물번호</th><th>제목</th><th>작성자</th><th>작성시각</th><th>조회수</th></tr>
 </thead>
-<tbody>
-<c:forEach var="notice" items="${alNotice}">
-	<tr onclick='document.location="/team/view?id=${notice.id}"'>
-		<td>${notice.id}</td>
-		<td>${notice.title}</td>
-		<td>${notice.name}</td>
-		<td>${notice.created}</td>
-		<td>${notice.viewCnt}</td>
-	</tr>
-</c:forEach>
-	<tr><td><input type=button value='글쓰기' id=btnWrite></td></tr>
+<tbody id=tbody>
+<%-- <c:forEach var="notice" items="${alNotice}"> --%>
+<%-- 	<tr onclick='document.location="/team/view?id=${notice.id}"'> --%>
+<%-- 		<td>${notice.id}</td> --%>
+<%-- 		<td>${notice.title}</td> --%>
+<%-- 		<td>${notice.name}</td> --%>
+<%-- 		<td>${notice.created}</td> --%>
+<%-- 		<td>${notice.viewCnt}</td> --%>
+<!-- 	</tr> -->
+<%-- </c:forEach> --%>
+	
 </tbody>
+<tr><td><input type=button value='글쓰기' id=btnWrite></td></tr>
 </table>
 
 <table align=center>
@@ -65,9 +66,20 @@ table {
 </body>
 <script src='https://code.jquery.com/jquery-3.5.0.js'></script>
 <script>
+let pageno=1;
 $(document)
 .ready(function(){
-	let pageno=1;
+	$.ajax({url:"/team/Notice1",data:{},datatype:"json",
+		method:"GET",
+		    success:function(txt){
+		for(i=0; i<txt.length; i++){
+			let str='<tr><td>'+txt[i]['id']+'</td><td>'+txt[i]['title']+'</td><td>'+
+					txt[i]['name']+'</td><td>'+txt[i]['created']+'</td><td>'+txt[i]['viewCnt']+'</td></tr>';
+			$('#tbody').append(str);
+		}
+		
+		    }
+	});
 })
 .on('click','#btnWrite',function(){
 	if(${type}==0){
@@ -77,26 +89,29 @@ $(document)
 	}
 })
 .on('click','#next',function(){
+	console.log(pageno);
 	pageno=pageno+1;
-		$.ajax({url:'/team/pagecheck',
-				data:{pageno:pageno},
-				datatype:'json',
-				method:'get',
-				success:function(data){
-					if(data==null){
-						return false;
-					}
-				}
+// 		$.ajax({url:'/team/pagecheck',
+// 				data:{pageno:pageno},
+// 				datatype:'json',
+// 				method:'get',
+// 				success:function(data){
+// 					console.log(data);														
+// 					if(data==null){
+// 						return false;
+// 					}
+				
 
 	$.ajax({url:'/team/paging',
 			data:{pageno:pageno},
    		datatype:'text',
    		method:'get',
    		success:function(txt){
-			
+   			
    		}
 	})
-		})
+// 				}
+// 		})
 })
 </script>
 </html>

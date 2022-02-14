@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+
 import com.human.team.iTeam;
 
 import net.sf.json.JSONArray;
@@ -378,11 +379,34 @@ public class HomeController {
 	}
 	
 	//-------------------공지사항
-    @RequestMapping("/notice")
-    public String notice(Model model, HttpServletRequest request) { 
-       iTeam notice=sqlSession.getMapper(iTeam.class);
-       ArrayList<Notice> alNotice=notice.getPaging();
-       HttpSession session = request.getSession(true);
+//    @RequestMapping("/notice")
+//    public String notice(Model model, HttpServletRequest request) { 
+//       iTeam notice=sqlSession.getMapper(iTeam.class);
+//       ArrayList<Notice> alNotice=notice.getPaging();
+//       HttpSession session = request.getSession(true);
+//       String type1="";
+//       String userid="";
+//       if(session.getAttribute("userid")==null) {
+//          userid="null";
+//       } else {
+//          userid=(String) session.getAttribute("userid");
+//       }
+//       if(session.getAttribute("type")==null){
+//          type1="2";
+//       } else {
+//          type1=(String) session.getAttribute("type");
+//       }
+//       int type=Integer.parseInt(type1);
+//       
+//       model.addAttribute("type",type);
+//       model.addAttribute("userid",userid);
+//       model.addAttribute("alNotice",alNotice);
+//       
+//       return "notice";
+//    }
+	@RequestMapping(value="/notice")
+	public String Notice(Model model, HttpServletRequest request) {
+		 HttpSession session = request.getSession(true);
        String type1="";
        String userid="";
        if(session.getAttribute("userid")==null) {
@@ -399,10 +423,29 @@ public class HomeController {
        
        model.addAttribute("type",type);
        model.addAttribute("userid",userid);
-       model.addAttribute("alNotice",alNotice);
-       
-       return "notice";
-    }
+		return "notice";
+	}
+	@ResponseBody
+	@RequestMapping(value="/Notice1",method=RequestMethod.GET,
+            produces="application/json;charset=utf-8")
+	public String doNotice(Model model, HttpServletRequest request) {
+		iTeam ml = sqlSession.getMapper(iTeam.class);// 인터페이스 이름 작성(iEmp)
+		ArrayList<Notice> alNotice = ml.getPaging();
+		
+		JSONArray ja = new JSONArray();
+		for(int i=0; i<alNotice.size(); i++) { //ArrayList -> JSON 으로 바꾸는 작업 해야함
+			JSONObject jo = new JSONObject();
+			jo.put("id",alNotice.get(i).getId());
+			jo.put("title",alNotice.get(i).getTitle());   // getter,setter 한 이름을 가져다 씀
+			jo.put("name",alNotice.get(i).getName());
+			jo.put("content",alNotice.get(i).getContent());
+			jo.put("created",alNotice.get(i).getCreated());
+			jo.put("viewCnt",alNotice.get(i).getViewCnt());
+			ja.add(jo);
+		}
+
+		return ja.toString();   //  return 시 addMenu 의 ajax -> function(txt) 의 txt라는 변수에 들어간다.
+	}
     @RequestMapping("/view")
     public String view(HttpServletRequest hsr, Model model) {
        int id=Integer.parseInt(hsr.getParameter("id"));
@@ -475,10 +518,12 @@ public class HomeController {
     	int start=lines*pageno+1;
     	int end=lines*(pageno+1);
     	ArrayList<Notice> pageList = notice.PagingList(start,end);
-    	model.addAttribute("PageList",pageList);
+    	System.out.println(pageList.size());
+    	model.addAttribute("alNotice",pageList);
     	return "notice";
     }
-    @ResponseBody
+
+    @ResponseBody 
     @RequestMapping(value="/pagecheck", method=RequestMethod.GET,produces="application/text;charset=UTF-8")
     public String pagecheck(HttpServletRequest hsr) {
 		iTeam Notice=sqlSession.getMapper(iTeam.class);
@@ -487,10 +532,11 @@ public class HomeController {
     	int start=lines*pageno+1;
     	int end=lines*(pageno+1);
     	ArrayList<Notice> pageList = Notice.PagingList(start,end);
+    	System.out.println(pageList.size());
 		JSONArray ja=new JSONArray();
 		for(int i=0; i<pageList.size(); i++) {
 			JSONObject jo=new JSONObject();
-			jo.put("pageCount",pageList.get(i).getId());
+			jo.put("id",pageList.get(i).getId());
 			ja.add(jo);
 		}
 		return ja.toString();
