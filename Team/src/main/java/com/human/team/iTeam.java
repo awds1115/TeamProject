@@ -34,4 +34,5 @@ public interface iTeam {
 	void insertBook(int roomcode, String date3, String date4, int howmany, String guest, String mobile, int howmuch,
 			String member_id);
 	ArrayList<Notice> PagingList(int start, int end);
+	ArrayList<Notice> getSerch(String serch);
 }

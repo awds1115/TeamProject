@@ -67,12 +67,14 @@
 
 
 <select id="getView" resultType="com.human.team.Notice">
-select id,name,title,content,created,viewcnt 
-    from (select rownum id, name,title,content, created, viewcnt from board)
-where id=#{param1}
+select id,bno,name,title,content,created,viewcnt 
+    from (select rownum id,bno ,name,title,content, created, viewcnt from board)
+where bno=#{param1}
 </select>
 <update id="plusViewCnt">
-   update board set viewcnt=viewcnt+1 where id=#{param1} 
+update board 
+set viewcnt=viewcnt+1 
+where bno=(select bno from (select rownum id,bno,viewcnt from board) where bno=#{param1})
 </update>
 <insert id="writeNotice">
    insert into board(id,title,name,content,created,viewcnt)
@@ -86,16 +88,22 @@ where id=#{param1}
    where id=#{param1}
 </update>
 <select id="getPaging" resultType="com.human.team.Notice">
- select id,name,title,content,created,viewcnt 
-    from (select rownum id, name,title,content, created, viewcnt from board)
+ select id,bno,name,title,content,created,viewcnt 
+    from (select rownum id,bno,name,title,content, created, viewcnt from board)
 where id between 1 and 10 order by id
 </select>
 <insert id="insertBook">
-   insert into book values (seq_book.nextval,#{param1},#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8})
+   insert into book values (seq_book.nextval,#{param1},to_char(#{param2},'YYYY/MM/DD'),to_char(#{param3},'YYYY/MM/DD'),#{param4},#{param5},#{param6},#{param7},#{param8})
 </insert>
 <select id="PagingList" resultType="com.human.team.Notice">
- select id,name,title,content,created,viewcnt 
-    from (select rownum id, name,title,content, created, viewcnt from board)
+ select id,bno,name,title,content,created,viewCnt 
+    from (select rownum id,bno,name,title,content, created, viewCnt from board)
 where id between #{param1} and #{param2} order by id
+</select>
+<select id="getSerch" resultType="com.human.team.Notice">
+select id,bno,name,title,content,created,viewCnt
+from board
+where title like '%'||#{param1}||'%'
+
 </select>
 </mapper>

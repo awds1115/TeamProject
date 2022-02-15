@@ -441,6 +441,7 @@ public class HomeController {
 			jo.put("content",alNotice.get(i).getContent());
 			jo.put("created",alNotice.get(i).getCreated());
 			jo.put("viewCnt",alNotice.get(i).getViewCnt());
+			jo.put("bno",alNotice.get(i).getBno());
 			ja.add(jo);
 		}
 
@@ -449,6 +450,7 @@ public class HomeController {
     @RequestMapping("/view")
     public String view(HttpServletRequest hsr, Model model) {
        int id=Integer.parseInt(hsr.getParameter("id"));
+       System.out.println(id);
        iTeam notice=sqlSession.getMapper(iTeam.class);
        notice.plusViewCnt(id); 
        Notice view=notice.getView(id); 
@@ -510,17 +512,35 @@ public class HomeController {
           notice.updateNotice(id,title,name,content);
        return "redirect:/notice";
     }
-    @RequestMapping(value="/paging")
+    @ResponseBody
+    @RequestMapping(value="/paging" ,method=RequestMethod.GET, produces="application/text;charset=UTF-8")
     public String getLines(HttpServletRequest hsr, Model model) {
     	iTeam notice=sqlSession.getMapper(iTeam.class);
     	int lines=10;
     	int pageno=Integer.parseInt(hsr.getParameter("pageno"));
+//    	System.out.println(pageno);
     	int start=lines*pageno+1;
     	int end=lines*(pageno+1);
+//    	System.out.println(start);
+//    	System.out.println(end);
     	ArrayList<Notice> pageList = notice.PagingList(start,end);
-    	System.out.println(pageList.size());
-    	model.addAttribute("alNotice",pageList);
-    	return "notice";
+//    	System.out.println("["+pageList.size()+"]");
+		
+    	JSONArray ja = new JSONArray();
+		for(int i=0; i<pageList.size(); i++) { //ArrayList -> JSON 으로 바꾸는 작업 해야함
+			JSONObject jo = new JSONObject();
+			
+			jo.put("id",pageList.get(i).getId());
+			jo.put("title",pageList.get(i).getTitle());   // getter,setter 한 이름을 가져다 씀
+			jo.put("name",pageList.get(i).getName());
+			jo.put("content",pageList.get(i).getContent());
+			jo.put("created",pageList.get(i).getCreated());
+			jo.put("viewCnt",pageList.get(i).getViewCnt());
+			jo.put("bno",pageList.get(i).getBno());
+			ja.add(jo);
+	}
+//		System.out.println(ja.toString());
+		return ja.toString(); 
     }
 
     @ResponseBody 
@@ -541,6 +561,27 @@ public class HomeController {
 		}
 		return ja.toString();
     }
+    @ResponseBody
+    @RequestMapping(value="/Serch", method=RequestMethod.GET,produces="application/text;charset=UTF-8")
     
-    
+    public String serch(HttpServletRequest hsr) {
+    	iTeam Notice=sqlSession.getMapper(iTeam.class);
+    	String serch=hsr.getParameter("serch");
+    	System.out.println(serch);
+    	ArrayList<Notice> getSerch = Notice.getSerch(serch); 
+    		System.out.println(getSerch.size());
+    	JSONArray ja=new JSONArray();
+		for(int i=0; i<getSerch.size(); i++) {
+			JSONObject jo=new JSONObject();
+			jo.put("id",getSerch.get(i).getId());
+			jo.put("title",getSerch.get(i).getTitle());   // getter,setter 한 이름을 가져다 씀
+			jo.put("name",getSerch.get(i).getName());
+			jo.put("content",getSerch.get(i).getContent());
+			jo.put("created",getSerch.get(i).getCreated());
+			jo.put("viewCnt",getSerch.get(i).getViewCnt());
+			jo.put("bno",getSerch.get(i).getBno());
+			ja.add(jo);
+		}
+    	return ja.toString();
+    }
 }

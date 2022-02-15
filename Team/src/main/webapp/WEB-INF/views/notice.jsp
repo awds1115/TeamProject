@@ -43,16 +43,7 @@ table {
 	<tr><th>게시물번호</th><th>제목</th><th>작성자</th><th>작성시각</th><th>조회수</th></tr>
 </thead>
 <tbody id=tbody>
-<%-- <c:forEach var="notice" items="${alNotice}"> --%>
-<%-- 	<tr onclick='document.location="/team/view?id=${notice.id}"'> --%>
-<%-- 		<td>${notice.id}</td> --%>
-<%-- 		<td>${notice.title}</td> --%>
-<%-- 		<td>${notice.name}</td> --%>
-<%-- 		<td>${notice.created}</td> --%>
-<%-- 		<td>${notice.viewCnt}</td> --%>
-<!-- 	</tr> -->
-<%-- </c:forEach> --%>
-	
+<input type=hidden id=id name=id>
 </tbody>
 <tr><td><input type=button value='글쓰기' id=btnWrite></td></tr>
 </table>
@@ -60,26 +51,37 @@ table {
 <table align=center>
 <tr><td><div> 
 <input type=button id=back name=back value="이전">&nbsp;&nbsp;
-<input type=button id=next name=next value="다음"> 
+<input type=button id=next name=next value="다음">&nbsp;&nbsp;
+검색 : <input type=text id=serch name=serch><input type=button id=serch1 name=serch1 value='찾기'>
 </div></td></tr>
 </table>
 </body>
 <script src='https://code.jquery.com/jquery-3.5.0.js'></script>
 <script>
-let pageno=1;
+let pageno=0;
 $(document)
 .ready(function(){
-	$.ajax({url:"/team/Notice1",data:{},datatype:"json",
-		method:"GET",
-		    success:function(txt){
-		for(i=0; i<txt.length; i++){
-			let str='<tr><td>'+txt[i]['id']+'</td><td>'+txt[i]['title']+'</td><td>'+
-					txt[i]['name']+'</td><td>'+txt[i]['created']+'</td><td>'+txt[i]['viewCnt']+'</td></tr>';
-			$('#tbody').append(str);
-		}
-		
-		    }
-	});
+	 jQuery.ajaxSettings.traditional = true; 
+	loadBoard();
+})
+// 'document.location="/ncs7/view?id=${post.id}
+
+.on('click','#serch1',function(){
+	$.ajax({url:'/team/Serch',
+		data:{serch:$('#serch').val()},
+		dataType:'JSON',
+		method:'GET',
+		success:function(data){
+			$('#tbody').empty();
+			for(i=0; i<data.length; i++){
+				$('#tbody').empty();
+				let str="<tr><td>"+data[i]["id"]+"</td><td>"+data[i]["title"]+"</td><td>"+
+						data[i]["name"]+"</td><td>"+data[i]["created"]+"</td><td>"+data[i]["viewCnt"]+
+						"</td><td><a href='/team/view?id="+data[i]['bno']+"'><input type=button id=view name=view value='read'></a></td></tr>";
+				$('#tbody').append(str);
+			}  	
+}
+	})	
 })
 .on('click','#btnWrite',function(){
 	if(${type}==0){
@@ -88,8 +90,12 @@ $(document)
 		alert("직원만 글 작성이 가능합니다.");
 	}
 })
+// .on('click','#view',function(){
+// 	$('#id').val();
+// 	console.log($('#id').val());
+// // 	document.location="/team/view?id=
+// })
 .on('click','#next',function(){
-	console.log(pageno);
 	pageno=pageno+1;
 // 		$.ajax({url:'/team/pagecheck',
 // 				data:{pageno:pageno},
@@ -100,18 +106,53 @@ $(document)
 // 					if(data==null){
 // 						return false;
 // 					}
-				
-
 	$.ajax({url:'/team/paging',
 			data:{pageno:pageno},
-   		datatype:'text',
-   		method:'get',
-   		success:function(txt){
-   			
-   		}
-	})
-// 				}
-// 		})
+   		dataType:'JSON',
+   		method:'GET',
+   		success:function(data){
+			$('#tbody').empty();
+			for(i=0; i<data.length; i++){
+				let str="<tr><td>"+data[i]["id"]+"</td><td>"+data[i]["title"]+"</td><td>"+
+						data[i]["name"]+"</td><td>"+data[i]["created"]+"</td><td>"+data[i]["viewCnt"]+
+						"</td><td><a href='/team/view?id="+data[i]['bno']+"'><input type=button id=view name=view value='read'></a></td></tr>";
+				$('#tbody').append(str);
+			}  
+	}
+		})
 })
+.on('click','#back',function(){
+	pageno=pageno-1;
+	$.ajax({url:'/team/paging',
+		data:{pageno:pageno},
+		dataType:'JSON',
+		method:'GET',
+		success:function(data){
+			$('#tbody').empty();
+			for(i=0; i<data.length; i++){
+				let str="<tr><td>"+data[i]["id"]+"</td><td>"+data[i]["title"]+"</td><td>"+
+						data[i]["name"]+"</td><td>"+data[i]["created"]+"</td><td>"+data[i]["viewCnt"]+
+						"</td><td><a href='/team/view?id="+data[i]['bno']+"'><input type=button id=view name=view value='read'></a></td></tr>";
+				$('#tbody').append(str);
+			}  
+		}
+	})
+})
+function loadBoard(){
+	$.ajax({url:"/team/Notice1",data:{},
+		dataType:"json",
+		method:"GET",
+		    success:function(data){
+				$('#tbody').empty();
+				for(i=0; i<data.length; i++){
+					let str="<tr><td>"+data[i]["id"]+"</td><td>"+data[i]["title"]+"</td><td>"+
+							data[i]["name"]+"</td><td>"+data[i]["created"]+"</td><td>"+data[i]["viewCnt"]+
+							"</td><td><a href='/team/view?id="+data[i]['bno']+"'><input type=button id=view name=view value='read'></a></td></tr>";
+					$('#tbody').append(str);
+				}  
+		
+		    }
+	});
+	}
 </script>
 </html>

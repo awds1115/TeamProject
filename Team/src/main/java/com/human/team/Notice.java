@@ -7,15 +7,17 @@ public class Notice {
 	private String content;
 	private String created;
 	private int viewCnt;
+	private int bno;
 	public Notice() {
 	}
-	public Notice(int id, String name, String title, String content, String created, int viewCnt) {
+	public Notice(int id, String name, String title, String content, String created, int viewCnt, int bno) {
 		this.id = id;
 		this.name = name;
 		this.title = title;
 		this.content = content;
 		this.created = created;
 		this.viewCnt = viewCnt;
+		this.bno = bno;
 	}
 	public int getId() {
 		return id;
@@ -52,6 +54,12 @@ public class Notice {
 	}
 	public void setViewCnt(int viewCnt) {
 		this.viewCnt = viewCnt;
+	}
+	public int getBno() {
+		return bno;
+	}
+	public void setBno(int bno) {
+		this.bno = bno;
 	}
 	
 }

@@ -13,7 +13,7 @@ td, th{ border:1px solid blue;}
 table{border-collapse:collapse;}
 </style>
 <body>
-<input type=hidden id=notice_id value="${notice.id}">
+<input type=hidden id=notice_id value="${notice.bno}">
 <table>
 <tr><td>제목</td><td><input type=text value="${notice.title}" readonly></td></tr>
 <tr><td>작성자</td><td><input type=text value="${notice.name}" readonly></td></tr>
