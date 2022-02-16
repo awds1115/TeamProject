@@ -404,6 +404,50 @@ public class HomeController {
 //       
 //       return "notice";
 //    }
+//	@RequestMapping(value="/serchpage")
+//	public String serchpage(Model model, HttpServletRequest request) {
+//		HttpSession session = request.getSession(true);
+//	       String type1="";
+//	       String userid="";
+//	       if(session.getAttribute("userid")==null) {
+//	          userid="null";
+//	       } else {
+//	          userid=(String) session.getAttribute("userid");
+//	       }
+//	       if(session.getAttribute("type")==null){
+//	          type1="2";
+//	       } else {
+//	          type1=(String) session.getAttribute("type");
+//	       }
+//	       int type=Integer.parseInt(type1);
+//	       
+//	       model.addAttribute("type",type);
+//	       model.addAttribute("userid",userid);
+//			return "serchpage";
+//	}
+//    @ResponseBody
+//    @RequestMapping(value="/Serch", method=RequestMethod.GET,produces="application/text;charset=UTF-8")
+//    
+//    public String serch(HttpServletRequest hsr) {
+//    	iTeam Notice=sqlSession.getMapper(iTeam.class);
+//    	String serch=hsr.getParameter("serch");
+//    	System.out.println(serch);
+//    	ArrayList<Notice> getSerch = Notice.getSerch(serch); 
+//    		System.out.println(getSerch.size());
+//    	JSONArray ja=new JSONArray();
+//		for(int i=0; i<getSerch.size(); i++) {
+//			JSONObject jo=new JSONObject();
+//			jo.put("id",getSerch.get(i).getId());
+//			jo.put("title",getSerch.get(i).getTitle());   // getter,setter 한 이름을 가져다 씀
+//			jo.put("name",getSerch.get(i).getName());
+//			jo.put("content",getSerch.get(i).getContent());
+//			jo.put("created",getSerch.get(i).getCreated());
+//			jo.put("viewCnt",getSerch.get(i).getViewCnt());
+//			jo.put("bno",getSerch.get(i).getBno());
+//			ja.add(jo);
+//		}
+//    	return ja.toString();
+//    }
 	@RequestMapping(value="/notice")
 	public String Notice(Model model, HttpServletRequest request) {
 		 HttpSession session = request.getSession(true);
@@ -425,6 +469,7 @@ public class HomeController {
        model.addAttribute("userid",userid);
 		return "notice";
 	}
+
 	@ResponseBody
 	@RequestMapping(value="/Notice1",method=RequestMethod.GET,
             produces="application/json;charset=utf-8")
@@ -561,27 +606,5 @@ public class HomeController {
 		}
 		return ja.toString();
     }
-    @ResponseBody
-    @RequestMapping(value="/Serch", method=RequestMethod.GET,produces="application/text;charset=UTF-8")
-    
-    public String serch(HttpServletRequest hsr) {
-    	iTeam Notice=sqlSession.getMapper(iTeam.class);
-    	String serch=hsr.getParameter("serch");
-    	System.out.println(serch);
-    	ArrayList<Notice> getSerch = Notice.getSerch(serch); 
-    		System.out.println(getSerch.size());
-    	JSONArray ja=new JSONArray();
-		for(int i=0; i<getSerch.size(); i++) {
-			JSONObject jo=new JSONObject();
-			jo.put("id",getSerch.get(i).getId());
-			jo.put("title",getSerch.get(i).getTitle());   // getter,setter 한 이름을 가져다 씀
-			jo.put("name",getSerch.get(i).getName());
-			jo.put("content",getSerch.get(i).getContent());
-			jo.put("created",getSerch.get(i).getCreated());
-			jo.put("viewCnt",getSerch.get(i).getViewCnt());
-			jo.put("bno",getSerch.get(i).getBno());
-			ja.add(jo);
-		}
-    	return ja.toString();
-    }
+
 }

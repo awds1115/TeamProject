@@ -52,7 +52,6 @@ table {
 <tr><td><div> 
 <input type=button id=back name=back value="이전">&nbsp;&nbsp;
 <input type=button id=next name=next value="다음">&nbsp;&nbsp;
-검색 : <input type=text id=serch name=serch><input type=button id=serch1 name=serch1 value='찾기'>
 </div></td></tr>
 </table>
 </body>
@@ -61,27 +60,8 @@ table {
 let pageno=0;
 $(document)
 .ready(function(){
-	 jQuery.ajaxSettings.traditional = true; 
+	 
 	loadBoard();
-})
-// 'document.location="/ncs7/view?id=${post.id}
-
-.on('click','#serch1',function(){
-	$.ajax({url:'/team/Serch',
-		data:{serch:$('#serch').val()},
-		dataType:'JSON',
-		method:'GET',
-		success:function(data){
-			$('#tbody').empty();
-			for(i=0; i<data.length; i++){
-				$('#tbody').empty();
-				let str="<tr><td>"+data[i]["id"]+"</td><td>"+data[i]["title"]+"</td><td>"+
-						data[i]["name"]+"</td><td>"+data[i]["created"]+"</td><td>"+data[i]["viewCnt"]+
-						"</td><td><a href='/team/view?id="+data[i]['bno']+"'><input type=button id=view name=view value='read'></a></td></tr>";
-				$('#tbody').append(str);
-			}  	
-}
-	})	
 })
 .on('click','#btnWrite',function(){
 	if(${type}==0){
@@ -90,22 +70,18 @@ $(document)
 		alert("직원만 글 작성이 가능합니다.");
 	}
 })
-// .on('click','#view',function(){
-// 	$('#id').val();
-// 	console.log($('#id').val());
-// // 	document.location="/team/view?id=
-// })
 .on('click','#next',function(){
 	pageno=pageno+1;
-// 		$.ajax({url:'/team/pagecheck',
-// 				data:{pageno:pageno},
-// 				datatype:'json',
-// 				method:'get',
-// 				success:function(data){
-// 					console.log(data);														
-// 					if(data==null){
-// 						return false;
-// 					}
+		$.ajax({url:'/team/pagecheck',
+				data:{pageno:pageno},
+				datatype:'json',
+				method:'get',
+				success:function(data){														
+					if(data=='[]'){
+						alert("마지막 페이지 입니다.");
+						pageno=pageno-1;
+						return false;
+					}
 	$.ajax({url:'/team/paging',
 			data:{pageno:pageno},
    		dataType:'JSON',
@@ -120,9 +96,21 @@ $(document)
 			}  
 	}
 		})
+				} // pagecheck
+		}) // pagecheckc
 })
 .on('click','#back',function(){
 	pageno=pageno-1;
+	$.ajax({url:'/team/pagecheck',
+		data:{pageno:pageno},
+		datatype:'json',
+		method:'get',
+		success:function(data){															
+			if(data=='[]'){
+				alert("마지막 페이지 입니다.");
+				pageno=0;
+				return false;
+			}
 	$.ajax({url:'/team/paging',
 		data:{pageno:pageno},
 		dataType:'JSON',
@@ -137,6 +125,8 @@ $(document)
 			}  
 		}
 	})
+		} // pagecheck
+	})  // pagecheck
 })
 function loadBoard(){
 	$.ajax({url:"/team/Notice1",data:{},

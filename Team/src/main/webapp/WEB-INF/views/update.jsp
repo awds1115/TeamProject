@@ -13,7 +13,7 @@ td, th{ border:1px solid blue;}
 <body>
 <!-- $.ajax(url:'/modify',data:{post_id:$('#post_id').val(), title:$('#title').val() -->
 <!--        name:$('#name').val(), content:$('#content').val()); -->
-<input type=hidden id=notice_id name=notice_id value="${notice.id}">
+<input type=hidden id=notice_id name=notice_id value="${notice.bno}">
 <table style='border-collapse:collapse;'>
 <tr><td>제목</td><td><input type=text value="${notice.title}" id=title name=title ></td></tr>
 <tr><td>작성자</td><td><input type=text value="${notice.name}" id=name name=name></td></tr>

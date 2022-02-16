@@ -20,7 +20,8 @@ public interface iTeam {
 	ArrayList<Member> getMember();
 	void signCheck(String name,	String gender, String userid, String passcode, String mobile, String type);
 	void quitMember(String userid);
-	
+	void insertBook(int roomcode, String date3, String date4, int howmany, String guest, String mobile, int howmuch,
+			String member_id);
 	ArrayList<Member> getMemberList();
 	ArrayList<Member> getTypeList();
 	void UpdateMember(String userid);
@@ -31,8 +32,7 @@ public interface iTeam {
 	   void writeNotice(String title, String name, String content);
 	   void deleteNotice(int notice_id);
 	   void updateNotice(int id, String title, String name, String content);
-	void insertBook(int roomcode, String date3, String date4, int howmany, String guest, String mobile, int howmuch,
-			String member_id);
+
 	ArrayList<Notice> PagingList(int start, int end);
 	ArrayList<Notice> getSerch(String serch);
 }
